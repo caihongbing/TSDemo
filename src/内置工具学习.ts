@@ -20,12 +20,19 @@ type PickUser = Mypick<NewUser, 'name' | 'age' | 'id'> //
 
 /**
  * Exclude
- * 作用：过滤掉要排除的属性，返回我们想要的属性的键
+ * 作用：过滤掉要排除的属性，返回我们想要的
  * 场景：
- * 语法： 如下
+ * 语法：T extends U ? never : T ，底层实现是条件类型，如果T是联合类型触发分布式条件类型
  */
-// 条件类型
 type MyExclude<T, U> = T extends U ? never : T
+// 一下过程
+/**
+ * 1.  T ---> "address" | "changeAt" | "id" | 'name' | 'age' | 'updateDate'
+ * 2.  把 T 拆开
+ * "address" extends 'name' | 'age' | 'updateDate' ? never : "address" | "changeAt" extends 'name' | 'age' | 'updateDate' ? never : "changeAt"
+ * 。。。
+ *
+ */
 type ExcludeUser = MyExclude<keyof NewUser, 'name' | 'age' | 'updateDate'> // "address" | "changeAt" | "id"
 
 /**
@@ -34,7 +41,7 @@ type ExcludeUser = MyExclude<keyof NewUser, 'name' | 'age' | 'updateDate'> // "a
  * 场景： 比如我们定义了一些通用的类型别名或者接口，只要其中的某些属性，基础的话我们就重新写一个type或者interface，进阶就是利用映射类型和对应的内置工具
  * 语法： 如下
  */
-//  Exclude<keyof T, K> // 排除掉我们要的，返回剩下的 // 语法： T extends U ? never : T
+
 type Myomit<T, K extends keyof any> = Mypick<T, Exclude<keyof T, K>>
 // type OmitUser = Myomit<NewUser, 'changeAt' | 'id'>
 type OmitUser = Myomit<NewUser, 'changeAt' | 'id' | 'updateDate'> // K 可以any，反正只会返回他有的
