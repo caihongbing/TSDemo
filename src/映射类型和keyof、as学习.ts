@@ -55,3 +55,25 @@ type myPick<T, K extends keyof T> = {
   [P in K]: T[P]
 }
 type getNameAndAge = myPick<User, 'name' | 'age'>
+
+/**
+ * as 对映射类型中的键重新映射
+ */
+
+type myPick2<T, K extends keyof T> = {
+  [P in K as `get${Capitalize<P & string>}`]: T[P]
+}
+
+type myPick3<T, K extends keyof T> = {
+  [P in K as `get${Capitalize<K & string>}`]: T[P]
+}
+type getNameAndAge2 = myPick2<User, 'name' | 'Sex' | 'age'>
+/**
+ * 1. 模板字面量类型 联合类型会展开
+ * 2. [P in K as "getName" | "getSex"]: T[P]
+ * 3. ["name" in K as getSex]: T[name]
+ * 4. ["Sex" in K as getSex]: T[Sex]
+ * 5. ["name" in K as getName]: T[name]
+ * 6. ["Sex" in K as getName]: T[Sex]
+ */
+type getNameAndAge3 = myPick3<User, 'name' | 'Sex'>
